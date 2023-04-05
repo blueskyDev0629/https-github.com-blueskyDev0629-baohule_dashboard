@@ -7,7 +7,6 @@ type SidebarContext = {
 
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const SidebarContext = createContext<SidebarContext>(
   {} as SidebarContext
 );
