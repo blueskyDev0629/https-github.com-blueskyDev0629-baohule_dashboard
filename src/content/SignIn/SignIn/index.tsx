@@ -1,14 +1,29 @@
-import { Box, Button, Container, Grid, Typography, TextField, Switch } from '@mui/material';
-import { useContext, useRef } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Typography,
+  TextField,
+  Switch,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  FormControl,
+  FormLabel,
+} from "@mui/material";
+import { useContext, useEffect, useRef, useState } from "react";
 
-import { Navigate, Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Navigate, Link as RouterLink, useNavigate } from "react-router-dom";
 
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 
-import { UserPriorityContext } from 'src/contexts/UserPriorityProvider';
-import {NotificationManager} from 'react-notifications';
-import 'react-notifications/lib/notifications.css';
-
+import { UserPriorityContext } from "src/contexts/UserPriorityProvider";
+import { NotificationManager } from "react-notifications";
+import "react-notifications/lib/notifications.css";
+import { ApiException } from "src/core/api-clients";
+import { useGlobalApiClient } from "src/core/useApiClient";
+import Cookies from "universal-cookie";
 
 const LabelWrapper = styled(Box)(
   ({ theme }) => `
@@ -64,30 +79,65 @@ const TsAvatar = styled(Box)(
 `
 );
 
-function Hero() {
+function Hero(props: { admin: Boolean; agent: Boolean }) {
+  const cookies = new Cookies();
   const navigate = useNavigate();
-  const {userPriority, setPriority} = useContext(UserPriorityContext);
   const email = useRef<HTMLInputElement>();
   const password = useRef<HTMLInputElement>();
+  const api = useGlobalApiClient();
 
-  const signIn = () => {
-    if(email.current.value == "agent1@gmail.com" && password.current.value == "agent1"){
-      setPriority(1);
-      window.localStorage.setItem("priority", "agent1");
-      navigate("/management");
+  useEffect(() => {
+    window.localStorage.setItem("priority", "none");
+  }, []);
+
+  const handlePass = () => {
+    if (!email.current.value || !password.current.value) {
+      NotificationManager.warning(
+        `Please fill out all inputs`,
+        "Invalid Input"
+      );
+    } else {
+      passLogIn();
     }
-    else if(email.current.value == "admin@gmail.com" && password.current.value == "admin") {
-      setPriority(0);
-      window.localStorage.setItem("priority", "admin");
-      navigate("/admin/dashboard");
-    }else {
-      NotificationManager.error(`Please input correct email and password.`, "Wrong email and password!")
+  };
+
+  const passLogIn = async () => {
+    if (props.admin == true) {
+      const { response, success } = await api.auth_admin_login_post({
+        email: email.current.value,
+        password: password.current.value,
+      });
+
+      if (success) {
+        NotificationManager.success(`Successfully logged in`, "Success");
+        navigate("/admin/app");
+      } else
+        NotificationManager.error(
+          `Please input correct email and password.`,
+          "Wrong email and password!"
+        );
+    } else if (props.agent == true) {
+      const { response, success } = await api.auth_agent_login_post({
+        email: email.current.value,
+        password: password.current.value,
+      });
+      if (success) {
+        NotificationManager.success(`Successfully logged in`, "Success");
+        cookies.set(
+          "agentId",
+          response.userClaim.id ? response.userClaim.id : null
+        );
+        navigate("/agent/app");
+      } else
+        NotificationManager.error(
+          `Please input correct email and password.`,
+          "Wrong email and password!"
+        );
     }
-  }
+  };
 
   return (
     <Container maxWidth="lg">
-      {console.log("userPriority = ", userPriority)}
       <Grid
         spacing={{ xs: 2, md: 3 }}
         justifyContent="center"
@@ -95,45 +145,40 @@ function Hero() {
         container
       >
         <Grid item md={10} lg={8} mx="auto">
-          <img src="/lock-icon.png" style={{borderRadius:'150px', width:'180px'}}/>
+          <img
+            src="/lock-icon.png"
+            style={{ borderRadius: "150px", width: "180px" }}
+          />
           <Box p={0} display="grid">
             <Box mt={2}>
-              <Typography textAlign="left">
-                Email
-              </Typography>
+              <Typography textAlign="left">Email</Typography>
               <TextField
                 required
-                InputLabelProps={{shrink: false}}
+                InputLabelProps={{ shrink: false }}
                 inputRef={email}
                 id="outlined-required"
               />
             </Box>
             <Box mt={2}>
-              <Typography textAlign="left">
-                Password
-              </Typography>
+              <Typography textAlign="left">Password</Typography>
               <TextField
                 id="outlined-password-input"
-                InputLabelProps={{shrink: false}}
+                InputLabelProps={{ shrink: false }}
                 type="password"
                 inputRef={password}
                 autoComplete="current-password"
               />
             </Box>
           </Box>
-          <Box display="inline-flex" mt={2} textAlign="left">
-            <Typography sx={{verticalAlign:'middle', margin:'auto'}}>Remember Me</Typography>
-            <Switch sx={{marginLeft:'10px'}} defaultChecked />
-          </Box>
           <Button
             // component={RouterLink}
             // to="/management/transactions"
-            onClick={signIn}
+            onClick={handlePass}
             size="large"
-            sx={{width:{xs:'100%', md:'100%'}, marginTop:'30px'}}
+            sx={{ width: { xs: "100%", md: "100%" }, marginTop: "30px" }}
             variant="contained"
           >
-           Sign In
+            Sign In
           </Button>
         </Grid>
       </Grid>

@@ -1,9 +1,10 @@
-import { Helmet } from 'react-helmet-async';
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { Helmet } from "react-helmet-async";
+import PropTypes from "prop-types";
+import { useState, useRef } from "react";
+import { useConfirm } from "material-ui-confirm";
 
-import PageTitle from 'src/components/PageTitle';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
+import PageTitle from "src/components/PageTitle";
+import PageTitleWrapper from "src/components/PageTitleWrapper";
 import {
   Container,
   Grid,
@@ -12,25 +13,117 @@ import {
   CardContent,
   Divider,
   Switch,
-  TextField
-} from '@mui/material';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import EditIcon from '@mui/icons-material/Edit';
-import Typography from '@mui/material/Typography';
-import Checkbox from '@mui/material/Checkbox';
-import { blue ,pink} from '@mui/material/colors';
+  TextField,
+} from "@mui/material";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Dialog from "@mui/material/Dialog";
+import EditIcon from "@mui/icons-material/Edit";
+import Typography from "@mui/material/Typography";
+import { NotificationManager } from "react-notifications";
+import { useGlobalApiClient } from "../../../../core/useApiClient";
+import Checkbox from "@mui/material/Checkbox";
+import { blue, pink } from "@mui/material/colors";
 
-const emails = ['username@gmail.com', 'user02@gmail.com'];
+const emails = ["username@gmail.com", "user02@gmail.com"];
 
-function SimpleDialog(props) {
-  const { onClose, selectedValue, open } = props;
+function EditUserInfoDialog(props) {
+  const { onClose, selectedValue, open, userID } = props;
+  const newName = useRef<HTMLInputElement>();
+  const newEmail = useRef<HTMLInputElement>();
+  const [newPassword, setNewPassword] = useState("");
+  const [isActive, setActive] = useState(true);
+
+  const confirm = useConfirm();
+
+  const api = useGlobalApiClient();
+
+  const handleActivate = () => {
+    setActive(!isActive);
+  };
+
+  const handlePass = () => {
+    if (
+      !newEmail.current.value
+    ) {
+      NotificationManager.warning(
+        `Please fill out all inputs`,
+        "Invalid Input"
+      );
+    } else if (! newPassword) {
+      passEditInfoWithoutPass();
+    } else {
+      passEditInfo();
+    }
+  };
+  // id: string;
+  // password?: string;
+  // email?: string;
+  // username?: string;
+  // active?: boolean;
+  const passEditInfo = async () => {
+    const { response } = await api.agent_update_user_post({
+      id: userID,
+      password: newPassword,
+      email: newEmail.current.value,
+      active: isActive,
+    });
+   
+    if (!response) {
+      NotificationManager.error(
+        `Please input correct user id`,
+        "User does not exist"
+      );
+    } else {
+      NotificationManager.success(`The User Information Updated`, "Success");
+    }
+    handleClose();
+  };
+
+  const passEditInfoWithoutPass = async () => {
+    const { response } = await api.agent_update_user_post({
+      id: userID,
+      email: newEmail.current.value,
+      active: isActive,
+    });
+   
+    if (!response) {
+      NotificationManager.error(
+        `Please input correct user id`,
+        "User does not exist"
+      );
+    } else {
+      NotificationManager.success(`The User Information Updated`, "Success");
+    }
+    handleClose();
+  };
+
+  const handleConfirm = () => {
+    confirm({ description: "You want to change the user's password?" })
+      .then(() => {
+        handleGeneratePassword();
+      })
+      .catch(() => {
+      });
+  }
+
+  const handleGeneratePassword = async () => {
+    const { response } = await api.auth_generate_password_post({userId:userID});
+    if (!response) {
+      NotificationManager.error(
+        `Something went wrong`,
+        "Failed"
+      );
+    } else {
+      setNewPassword(response.password);
+      NotificationManager.success(`New Password : `+response.password, "Success");
+    }
+  }
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -42,42 +135,95 @@ function SimpleDialog(props) {
 
   return (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle  sx={{fontSize:'25px', fontWeight:'bold', color:'white', pt:"3rem"}}>
-        <Typography sx={{textAlign:'center', fontSize:'25px', fontWeight:'bold', textShadow:'1px 1px 10px #8c7cf0'}}>Edit User Info</Typography>
+      <DialogTitle
+        sx={{
+          fontSize: "25px",
+          fontWeight: "bold",
+          color: "white",
+          pt: "3rem",
+        }}
+      >
+        <Typography
+          sx={{
+            textAlign: "center",
+            fontSize: "25px",
+            fontWeight: "bold",
+            textShadow: "1px 1px 10px #8c7cf0",
+          }}
+        >
+          Edit User Info
+        </Typography>
       </DialogTitle>
       <List sx={{ pt: 0 }}>
-          <ListItem sx={{justifyContent:'space-between'}}>
-            <Typography mr={3}>UserName</Typography>
-            <TextField size='small' sx={{width:'190px'}}/>
-          </ListItem>
-          <ListItem sx={{justifyContent:'space-between'}}>
-            <Typography>User ID</Typography>
-            <TextField size='small' sx={{width:'190px'}}/>
-          </ListItem>
-          <ListItem sx={{justifyContent:'center'}}>
-            <Typography>Activate</Typography>
-            <Switch sx={{marginLeft:'40px'}} defaultChecked />
-          </ListItem>
-          <ListItem sx={{justifyContent:'center'}}>
-            <Typography mr={2}>Phone Number</Typography>
-            <Typography mr={2}>+1 348 888 8282</Typography>
-          </ListItem>
-          <ListItem sx={{justifyContent:'center'}}>
-            <Button sx={{marginRight:'70px'}} variant="contained">Confirm</Button>
-            <Button onClick={handleClose} variant="contained">Cancel</Button>
-          </ListItem>
+        <ListItem sx={{ justifyContent: "space-between" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <Typography>User ID</Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <TextField
+                size="small"
+                sx={{ width: "100%" }}
+                value={userID}
+                disabled
+              />
+            </Grid>
+          </Grid>
+        </ListItem>
+        <ListItem sx={{ justifyContent: "space-between" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <Typography>New Email</Typography>
+            </Grid>
+            <Grid item xs={8}>
+              <TextField
+                size="small"
+                sx={{ width: "100%" }}
+                inputRef={newEmail}
+              />
+            </Grid>
+          </Grid>
+        </ListItem>
+        <ListItem sx={{ justifyContent: "center" }}>
+          <Typography>Activate</Typography>
+          <Switch
+            sx={{ marginLeft: "40px" }}
+            onChange={handleActivate}
+            defaultChecked
+          />
+        </ListItem>
+        <ListItem sx={{ justifyContent: "space-between" }}>
+          <Grid container spacing={2}>
+            <Grid item md={6}>
+              <Button sx={{ width:"100%" }} onClick={handleConfirm} variant="contained">
+                New Password
+              </Button>
+            </Grid>
+            <Grid item md={6}>
+              <Button
+                sx={{ width:"100%" }}
+                variant="contained"
+                onClick={handlePass}
+              >
+                Confirm
+              </Button>
+            </Grid>
+          </Grid>
+        </ListItem>
       </List>
     </Dialog>
   );
 }
 
-SimpleDialog.propTypes = {
+EditUserInfoDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired
+  userID: PropTypes.string.isRequired,
+  // selectedValue: PropTypes.string.isRequired
 };
 
-function EditUserInfo() {
+export function EditUserInfo(props) {
+  const { userID } = props;
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(emails[1]);
 
@@ -92,16 +238,22 @@ function EditUserInfo() {
 
   return (
     <>
-      <Button disableRipple startIcon={<EditIcon />} onClick={handleClickOpen}>
-        Edit User Info
+      <Button
+        variant="contained"
+        sx={{ backgroundColor: "#e65100" }}
+        disableRipple
+        startIcon={<EditIcon />}
+        onClick={handleClickOpen}
+      >
+        <Typography noWrap>Edit User Info</Typography>
       </Button>
-      <SimpleDialog
-        selectedValue={selectedValue}
-        open={open}
-        onClose={handleClose}
-      />
+      <EditUserInfoDialog userID={userID} open={open} onClose={handleClose} />
     </>
   );
 }
 
-export default EditUserInfo;
+export default EditUserInfoDialog;
+
+EditUserInfo.propTypes = {
+  userID: PropTypes.string.isRequired,
+};

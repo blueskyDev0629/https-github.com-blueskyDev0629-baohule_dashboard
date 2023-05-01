@@ -23,6 +23,14 @@ export interface AgentData {
   status: AccountStatus;
 }
 
+export interface DepositRequestData {
+  id: number;
+  avatar: string;
+  userName: string;
+  email: string;
+  amount: number;
+}
+
 export interface GameStatisticData{
   id: number;
   avataUrl:string;

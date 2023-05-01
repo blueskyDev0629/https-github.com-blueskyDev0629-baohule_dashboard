@@ -4,7 +4,6 @@ import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Grid, Container, Typography, Button } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
-import agentDatas from './AgentDatas';
 
 import RecentOrdersTable from './AgentDataTable';
 import { useContext, useEffect } from 'react';
@@ -21,11 +20,13 @@ function AgentManagement() {
   };
   const func1 = (userID) => {
     alert(userID);
-  }
-  return (
+  };
+
+    // @ts-ignore
+    return (
     <>
       <Helmet>
-        <title>Agent - Applications</title>
+        <title>Agent - Management</title>
       </Helmet>
       <PageTitleWrapper>
         <PageHeader />

@@ -1,6 +1,7 @@
 import { Typography, Button, Grid } from '@mui/material';
 
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
+import { AddAgent } from 'src/content/pages/Components/Modals/AddAgent';
 
 function PageHeader() {
   const user = {
@@ -14,18 +15,12 @@ function PageHeader() {
           Agent Manager
         </Typography>
         <Typography variant="subtitle2">
-          you can see all agent' account states here.  
+          Manage all agents' accounts here.  
         </Typography>
       </Grid>
-      {/* <Grid item>
-        <Button
-          sx={{ mt: { xs: 2, md: 0 } }}
-          variant="contained"
-          startIcon={<AddTwoToneIcon fontSize="small" />}
-        >
-          Create transaction
-        </Button>
-      </Grid> */}
+      <Grid item>
+        <AddAgent/>
+      </Grid>
     </Grid>
   );
 }

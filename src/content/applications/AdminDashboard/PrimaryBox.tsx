@@ -1,19 +1,14 @@
-import { Box, Grid } from "@mui/material";
+import { Box, Card, Grid } from "@mui/material";
 import RadioIcon from '@mui/icons-material/Radio';
 import LanguageIcon from '@mui/icons-material/Language';
 import { styled } from "@mui/styles";
 import { Stack } from "@mui/material";
 import {FristStatiscData} from 'src/models/crypto_order';
 
-const AdminSBox = styled(Box)({
-    height: "80px",
-    background: "#171d37",
-    borderStyle: "outset",
-    border: "0px",
+const AdminSCard = styled(Card)({
     backdropFilter: "blur(25px)",
-    borderRadius: "20px",
+    borderRadius: "10px",
     marginTop: "10px",
-    padding:"0.5rem 1rem"
 })
 
 interface PrimaryBoxProps{
@@ -29,10 +24,11 @@ export default function PrimaryBox(props) {
             spacing={2}
             sx={{width:"100%"}}
             >
-                <AdminSBox>
+                <AdminSCard>
                     <Grid container
                         sx={{
-                            height: "100%"
+                            height: "100%",
+                            padding:"1rem 1.5rem"
                         }}>
                         <Grid item xs={10} sx={{
                             height: "100%",
@@ -72,11 +68,12 @@ export default function PrimaryBox(props) {
                             </Box>
                         </Grid>
                     </Grid>
-                </AdminSBox>
-                <AdminSBox>
+                </AdminSCard>
+                <AdminSCard>
                     <Grid container
                         sx={{
-                            height: "100%"
+                            height: "100%",
+                            padding:"1rem 1.5rem"
                         }}>
                         <Grid item xs={10} sx={{
                             height: "100%",
@@ -116,7 +113,7 @@ export default function PrimaryBox(props) {
                             </Box>
                         </Grid>
                     </Grid>
-                </AdminSBox>
+                </AdminSCard>
             </Stack>
         </>
     )

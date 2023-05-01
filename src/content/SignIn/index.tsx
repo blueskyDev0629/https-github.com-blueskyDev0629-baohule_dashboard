@@ -26,7 +26,7 @@ const TypographyH2 = styled(Typography)(
 `
 );
 
-function Overview() {
+function Overview(props:{admin:Boolean, agent:Boolean}) {
   return (
     <OverviewWrapper>
       <Helmet>
@@ -47,12 +47,21 @@ function Overview() {
             Please log in to your account.
           </TypographyH2>
         </Box>
-        <Card sx={{ p: 3, mb: 10, borderRadius: 3, justifyContent:"center", textAlign:"center", width:{xs:"100%", md:"40%", sm:"60%"} }}>
-          <SignIn />
+        <Card sx={{ 
+            pl: 1,
+            pr: 1,
+            pt: 3,
+            pb: 3, 
+            mb: 10, 
+            borderRadius: 2, 
+            justifyContent:"center", 
+            textAlign:"center", 
+            width:{xs:"100%", md:"40%", sm:"60%"} 
+          }}>
+          <SignIn admin={props.admin} agent={props.agent}/>
         </Card>
       </Container>
     </OverviewWrapper>
   );
 }
-
 export default Overview;

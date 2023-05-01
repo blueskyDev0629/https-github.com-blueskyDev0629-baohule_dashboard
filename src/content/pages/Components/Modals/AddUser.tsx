@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import PageTitle from 'src/components/PageTitle';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
@@ -27,11 +27,46 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import Typography from '@mui/material/Typography';
 import Checkbox from '@mui/material/Checkbox';
 import { blue ,pink} from '@mui/material/colors';
+import { useGlobalApiClient } from 'src/core/useApiClient';
+import {NotificationManager} from 'react-notifications';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
+// agent_create_user_post
 
-function SimpleDialog(props) {
+// email: string;
+// password: string;
+// username?: string;
+// credit_account?: CreditAccount;
+function AddUserDialog(props) {
   const { onClose, selectedValue, open } = props;
+  const userName = useRef<HTMLInputElement>();
+  const userEmail = useRef<HTMLInputElement>();
+  const [newPassword, setNewPassword] = useState("");
+  const userPasswordConfirm = useRef<HTMLInputElement>();
+
+  const api = useGlobalApiClient(); 
+  
+  const handlePass = () => {
+    if(!userName.current.value || !userEmail.current.value) {
+      NotificationManager.warning(`Please fill out all inputs`, "Invalid Input")
+    } else {
+      passUserInfo();
+    }
+  }
+
+  const passUserInfo = async () => {
+    const {response} = await api.agent_create_user_post({
+      email: userEmail.current.value, 
+      name:userName.current.value,
+      headImage: "Initial-image",
+      credit_account: {
+        balance: 0
+      }
+    });
+    if(response) NotificationManager.success(`The User Information Added`, "Success");
+    else NotificationManager.error(`Something went wrong`, "Failed");
+    handleClose();
+  }
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -42,43 +77,55 @@ function SimpleDialog(props) {
   };
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <DialogTitle  sx={{fontSize:'25px', fontWeight:'bold', color:'white', pt:"3rem"}}>
+    <Dialog onClose={handleClose} open={open} sx={{margin:"0px", padding:"0.5rem"}}>
+      <DialogTitle  sx={{fontSize:'25px', fontWeight:'bold', color:'white', pt:"4rem"}}>
         <Typography sx={{textAlign:'center', fontSize:'25px', fontWeight:'bold', textShadow:'1px 1px 10px #8c7cf0'}}>Add User</Typography>
       </DialogTitle>
       <List sx={{ pt: 0 }}>
           <ListItem sx={{justifyContent:'space-between'}}>
-            <Typography mr={3}>UserName</Typography>
-            <TextField size='small' sx={{width:'190px'}}/>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <Typography mr={1}>Name</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <TextField size='small' sx={{width:'100%'}} inputRef={userName}/>
+              </Grid>
+            </Grid>
           </ListItem>
           <ListItem sx={{justifyContent:'space-between'}}>
-            <Typography>Phone</Typography>
-            <TextField size='small' sx={{width:'190px'}}/>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <Typography mr={1}>Email</Typography>
+              </Grid>
+              <Grid item xs={8}>
+                <TextField size='small' sx={{width:'100%'}} inputRef={userEmail}/>
+              </Grid>
+            </Grid>
           </ListItem>
-          <ListItem sx={{justifyContent:'space-between'}}>
-            <Typography>Email</Typography>
-            <TextField size='small' sx={{width:'190px'}}/>
-          </ListItem>
-          <ListItem sx={{justifyContent:'center'}}>
-            <Checkbox/>
-            <Typography mr={2}>Are you sure?</Typography>
-          </ListItem>
-          <ListItem sx={{justifyContent:'center'}}>
-            <Button sx={{marginRight:'70px'}} variant="contained">Confirm</Button>
-            <Button onClick={handleClose} variant="contained">Cancel</Button>
-          </ListItem>
+          <ListItem sx={{ justifyContent: "center", marginTop:'15px' }}>
+            <Button
+              sx={{ marginRight: "70px" }}
+              variant="contained"
+              onClick={handlePass}
+            >
+              Confirm
+            </Button>
+            <Button onClick={handleClose} variant="contained">
+              Cancel
+            </Button>
+        </ListItem>
       </List>
     </Dialog>
   );
 }
 
-SimpleDialog.propTypes = {
+AddUserDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired
+  // selectedValue: PropTypes.string.isRequired
 };
 
-function AddUser() {
+export function AddUser() {
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(emails[1]);
 
@@ -93,11 +140,11 @@ function AddUser() {
 
   return (
     <>
-      <Button disableRipple startIcon={<PersonAddAltIcon />} onClick={handleClickOpen}>
+      <Button variant="contained" sx={{ backgroundColor: "#2e7d32" }} disableRipple startIcon={<PersonAddAltIcon />} onClick={handleClickOpen}>
         Add User
       </Button>
-      <SimpleDialog
-        selectedValue={selectedValue}
+      <AddUserDialog
+        // selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
       />
@@ -105,4 +152,4 @@ function AddUser() {
   );
 }
 
-export default AddUser;
+export default AddUserDialog;

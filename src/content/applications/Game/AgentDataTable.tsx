@@ -1,31 +1,30 @@
-import { FC, ChangeEvent, useState } from 'react';
-import { format } from 'date-fns';
-import numeral from 'numeral';
+import {ChangeEvent, FC, useState} from 'react';
+import {format} from 'date-fns';
 import PropTypes from 'prop-types';
 import {
-  Divider,
   Box,
+  Button,
+  Card,
+  CardHeader,
+  Divider,
   FormControl,
   InputLabel,
-  Card,
-  Button,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
-  TableContainer,
-  Select,
-  MenuItem,
   Typography,
-  useTheme,
-  CardHeader
+  useTheme
 } from '@mui/material';
 
 import Label from 'src/components/Label';
-import { AgentData, AccountStatus } from 'src/models/crypto_order';
-import { ArrowBack } from '@mui/icons-material';
+import {AccountStatus, AgentData} from 'src/models/crypto_order';
+import {ArrowBack} from '@mui/icons-material';
 
 
 interface agentDataTableProps {

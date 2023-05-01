@@ -15,7 +15,8 @@ import {
   Tooltip
 } from '@mui/material';
 
-import SidebarMenu from './SidebarMenu';
+import SidebarMenuAdmin from './SidebarMenuAdmin';
+import SidebarMenuAgent from './SidebarMenuAgent';
 
 const SidebarWrapper = styled(Box)(
   ({ theme }) => `
@@ -29,7 +30,7 @@ const SidebarWrapper = styled(Box)(
 `
 );
 
-function Sidebar() {
+function Sidebar(props:{type:string}) {
   const { sidebarToggle, toggleSidebar } = useContext(SidebarContext);
   const closeSidebar = () => toggleSidebar();
   const theme = useTheme();
@@ -54,24 +55,7 @@ function Sidebar() {
         }}
       >
         <Scrollbar>
-          {/* <Box mt={3}>
-            <Box
-              mx={2}
-              sx={{
-                width: 52
-              }}
-            >
-              <Logo />
-            </Box>
-          </Box>
-          <Divider
-            sx={{
-              mt: theme.spacing(3),
-              mx: theme.spacing(2),
-              background: theme.colors.alpha.trueWhite[10]
-            }}
-          /> */}
-          <SidebarMenu />
+          {props.type=="admin"?(<SidebarMenuAdmin/>):(<SidebarMenuAgent/>)}
         </Scrollbar>
         <Divider
           sx={{
@@ -107,7 +91,7 @@ function Sidebar() {
               >
               </Box>
             </Box>
-            <SidebarMenu />
+            {props.type=="admin"?(<SidebarMenuAdmin/>):(<SidebarMenuAgent/>)}
           </Scrollbar>
         </SidebarWrapper>
       </Drawer>

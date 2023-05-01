@@ -1,23 +1,11 @@
-import { ChangeEvent, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import {ChangeEvent, useState} from 'react';
+import {Helmet} from 'react-helmet-async';
 import PageHeader from './PageHeader';
-import {
-  Grid,
-  Tab,
-  Tabs,
-  Divider,
-  Container,
-  Card,
-  Box,
-  useTheme,
-  Avatar,
-  styled
-} from '@mui/material';
+import {Box, Card, Container, Grid, styled, Tab, Tabs, useTheme} from '@mui/material';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 
 import CreditHistoryTable from '../CreditHistory/CreditHistoryTable';
 import GameHistoryTable from '../GameHistory/GameHistoryTable';
-import userDatas from '../UserDatas';
 
 const TabsContainerWrapper = styled(Box)(
   ({ theme }) => `
@@ -101,7 +89,7 @@ const TabsContainerWrapper = styled(Box)(
   `
 );
 
-function TableDetails(props:{userID:string, userName:string}) {
+function TableDetails(props:{userID:string, userEmail:string, userName:string, balance:number}) {
   const theme = useTheme();
 
   const [currentTab, setCurrentTab] = useState<string>('credit');
@@ -115,13 +103,14 @@ function TableDetails(props:{userID:string, userName:string}) {
     setCurrentTab(value);
   };
 
+  // @ts-ignore
   return (
     <>
       <Helmet>
         <title>Tasks Dashboard</title>
       </Helmet>
       <PageTitleWrapper>
-        <PageHeader userName = {props.userName} />
+        <PageHeader userID={props.userID} userEmail={props.userEmail} userName = {props.userName} balance = {props.balance} />
       </PageTitleWrapper>
       <Container maxWidth="lg" sx={{marginBottom:'30px'}}>
         <TabsContainerWrapper>

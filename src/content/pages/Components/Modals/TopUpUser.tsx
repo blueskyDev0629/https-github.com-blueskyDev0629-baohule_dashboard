@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import PageTitle from 'src/components/PageTitle';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
@@ -29,7 +29,7 @@ import { blue ,pink} from '@mui/material/colors';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
-function SimpleDialog(props) {
+function TopUpDialog(props) {
   const { onClose, selectedValue, open } = props;
 
   const handleClose = () => {
@@ -39,6 +39,8 @@ function SimpleDialog(props) {
   const handleListItemClick = (value) => {
     onClose(value);
   };
+
+  const newName = useRef<HTMLInputElement>(); 
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -59,10 +61,6 @@ function SimpleDialog(props) {
             <Switch sx={{marginLeft:'40px'}} defaultChecked />
           </ListItem>
           <ListItem sx={{justifyContent:'center'}}>
-            <Typography mr={2}>Phone Number</Typography>
-            <Typography mr={2}>+1 348 888 8282</Typography>
-          </ListItem>
-          <ListItem sx={{justifyContent:'center'}}>
             <Button sx={{marginRight:'70px'}} variant="contained">Confirm</Button>
             <Button onClick={handleClose} variant="contained">Cancel</Button>
           </ListItem>
@@ -71,10 +69,10 @@ function SimpleDialog(props) {
   );
 }
 
-SimpleDialog.propTypes = {
+TopUpDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired
+  // selectedValue: PropTypes.string.isRequired
 };
 
 function TopUpUser() {
@@ -95,8 +93,8 @@ function TopUpUser() {
       <Button disableRipple startIcon={<DisplaySettingsIcon />} onClick={handleClickOpen}>
         TopUp User
       </Button>
-      <SimpleDialog
-        selectedValue={selectedValue}
+      <TopUpDialog
+        // selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
       />
@@ -104,4 +102,4 @@ function TopUpUser() {
   );
 }
 
-export default TopUpUser;
+export default TopUpDialog;

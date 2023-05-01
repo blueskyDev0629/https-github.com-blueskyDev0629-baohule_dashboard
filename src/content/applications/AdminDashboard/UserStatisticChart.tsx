@@ -1,20 +1,7 @@
-import { useRef, useState } from 'react';
-import {
-  Card,
-  Grid,
-  Button,
-  Box,
-  Menu,
-  alpha,
-  MenuItem,
-  Typography,
-  styled,
-  useTheme
-} from '@mui/material';
-import UserPerformance from './UserPerformance';
-import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
+import {useRef, useState} from 'react';
+import {alpha, styled, useTheme} from '@mui/material';
 import Chart from 'react-apexcharts';
-import type { ApexOptions } from 'apexcharts';
+import type {ApexOptions} from 'apexcharts';
 
 const DotPrimaryLight = styled('span')(
   ({ theme }) => `
@@ -167,6 +154,7 @@ function UserStatisticChart({datas}:UserStatisticChartProps) {
   const [openPeriod, setOpenMenuPeriod] = useState<boolean>(false);
   const [period, setPeriod] = useState<string>(periods[3].text);
 
+  // @ts-ignore
   return (
     <Chart
       options={chartOptions}

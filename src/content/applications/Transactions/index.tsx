@@ -1,15 +1,13 @@
-import { Helmet } from 'react-helmet-async';
+import {Helmet} from 'react-helmet-async';
 import PageHeader from './PageHeader';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container, Typography, Button } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
-import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
+import {Box, Card, Container, Grid, Typography} from '@mui/material';
 import userDatas from './UserDatas';
-import { useContext, useEffect } from 'react';
-import { UserPriorityContext } from 'src/contexts/UserPriorityProvider';
-import axios from 'axios';
-
+import {useContext} from 'react';
+import {UserPriorityContext} from 'src/contexts/UserPriorityProvider';
 import RecentOrdersTable from './UserDataTable';
+import { Carousel } from 'react-responsive-carousel';
+import Livechat from 'src/components/Chat/LiveChat';
 
 function ApplicationsTransactions() {
   const {setPriority} = useContext(UserPriorityContext);
@@ -26,10 +24,11 @@ function ApplicationsTransactions() {
   const func1 = (userID) => {
     alert(userID);
   }
-  return (
+  // @ts-ignore
+    return (
     <>
       <Helmet>
-        <title>Transactions - Applications</title>
+        <title>User - Management</title>
       </Helmet>
       <PageTitleWrapper>
         <PageHeader />

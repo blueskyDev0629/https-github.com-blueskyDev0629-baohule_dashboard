@@ -1,16 +1,19 @@
-import { FC, ReactNode } from 'react';
+import { Children, FC, ReactNode, useContext } from 'react';
 import { Box, alpha, lighten, useTheme } from '@mui/material';
 import { Outlet } from 'react-router-dom';
+import { UserPriorityContext } from "src/contexts/UserPriorityProvider";
 
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 interface SidebarLayoutProps {
   children?: ReactNode;
+  type?: string;
 }
 
-const SidebarLayout: FC<SidebarLayoutProps> = () => {
+const SidebarLayout: FC<SidebarLayoutProps> = (props) => {
   const theme = useTheme();
+  const {userData} = useContext(UserPriorityContext);
 
   return (
     <>
@@ -41,8 +44,8 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
           }
         }}
       >
-        <Header />
-        <Sidebar />
+        <Header type={props.type}/>
+        <Sidebar type={props.type}/>
         <Box
           sx={{
             position: 'relative',
@@ -56,7 +59,7 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
           }}
         >
           <Box display="block">
-            <Outlet />
+            {props.children}
           </Box>
         </Box>
       </Box>

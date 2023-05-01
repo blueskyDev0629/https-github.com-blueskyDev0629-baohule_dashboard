@@ -218,7 +218,7 @@ const GameDataTable: FC<GameDataTableProps> = ({ userDatas, func1 }) => {
                       onChange={handleSelectAllUseroOrders}
                     />
                   </TableCell>
-                  <TableCell>Game Avata</TableCell>
+                  <TableCell align="center">Game Avata</TableCell>
                   <TableCell align="center">Game Name</TableCell>
                   <TableCell align="center">Winnings</TableCell>
                   <TableCell align="center">Players</TableCell>
@@ -246,7 +246,7 @@ const GameDataTable: FC<GameDataTableProps> = ({ userDatas, func1 }) => {
                           value={isUserDataSelected}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell align="center">
                         <img src={userData.avataUrl} style={{width:"30px", height:"30px"}}/>
                       </TableCell>
                       <TableCell align="center">
